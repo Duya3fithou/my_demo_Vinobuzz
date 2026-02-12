@@ -7,11 +7,11 @@ import {
   Animated,
   Dimensions,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { mockChatMessages } from '../utils/mockData';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -30,7 +30,7 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-  const headerHeight = useHeaderHeight()
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (visible) {
@@ -54,7 +54,7 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
 
   const onSend = useCallback((newMessages: IMessage[] = []) => {
     setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, newMessages)
+      GiftedChat.append(previousMessages, newMessages),
     );
 
     setIsTyping(true);
@@ -84,48 +84,54 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
           },
         };
         setMessages(previousMessages =>
-          GiftedChat.append(previousMessages, [botMessage])
+          GiftedChat.append(previousMessages, [botMessage]),
         );
       }
     },
-    [onNavigateToProduct, onClose]
+    [onNavigateToProduct, onClose],
   );
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const renderCustomView = useCallback((props: any) => {
-    const currentMessage = props.currentMessage;
-    if (currentMessage.productId) {
-      return (
-        <View style={styles.customViewContainer}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.viewProductButton,
-              pressed && styles.viewProductButtonPressed,
-            ]}
-            onPress={() => {
-              onNavigateToProduct(currentMessage.productId);
-              onClose();
-            }}
-          >
-            <Text style={styles.viewProductButtonText}>View Product</Text>
-          </Pressable>
-        </View>
-      );
-    }
-    return null;
-  }, [onNavigateToProduct, onClose]);
+  const renderCustomView = useCallback(
+    (props: any) => {
+      const currentMessage = props.currentMessage;
+      if (currentMessage.productId) {
+        return (
+          <View style={styles.customViewContainer}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.viewProductButton,
+                pressed && styles.viewProductButtonPressed,
+              ]}
+              onPress={() => {
+                onNavigateToProduct(currentMessage.productId);
+                onClose();
+              }}
+            >
+              <Text style={styles.viewProductButtonText}>View Product</Text>
+            </Pressable>
+          </View>
+        );
+      }
+      return null;
+    },
+    [onNavigateToProduct, onClose],
+  );
 
   if (!visible) return null;
 
   return (
     <Animated.View
       style={[
-        isExpanded ? styles.containerExpanded : styles.containerMinimized,
+        isExpanded
+          ? styles.containerExpanded
+          : [styles.containerMinimized, { height: 120 + insets.bottom }],
         {
           transform: [{ translateY: slideAnim }],
+          paddingBottom: insets.bottom,
         },
       ]}
     >
@@ -148,8 +154,6 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
       {isExpanded && (
         <GiftedChat
           messages={messages}
-          extraScrollHeight={100}
-          keyboardShouldPersistTaps="handled"
           onSend={onSend}
           user={{
             _id: 1,
@@ -162,7 +166,6 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
           textInputProps={{
             placeholder: 'Type a message...',
           }}
-          keyboardAvoidingViewProps={{ keyboardVerticalOffset: headerHeight }}
           reply={{
             swipe: {
               isEnabled: true,
@@ -172,6 +175,10 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
         />
       )}
 
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'position'}
+        keyboardVerticalOffset={105}
+      />
       {!isExpanded && (
         <Pressable onPress={toggleExpand} style={styles.minimizedContent}>
           <Text style={styles.minimizedText}>💬</Text>
@@ -194,7 +201,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: SCREEN_HEIGHT*0.88 ,
+    height: SCREEN_HEIGHT * 0.88,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -216,7 +223,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 120,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -240,7 +246,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
-    paddingTop: 10 
+    paddingTop: 10,
   },
   headerLeft: {
     flexDirection: 'row',

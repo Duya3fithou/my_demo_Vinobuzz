@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ChatFAB } from '../components/ChatFAB';
-import { ChatOverlay } from '../components/ChatOverlay';
 import { RootStackParamList } from '../utils/types';
+import { ChatOverlay } from '../components/ChatOverlay';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -23,7 +27,7 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <ChatFAB onPress={() => setIsChatVisible(true)} />
-      
+
       <ChatOverlay
         visible={isChatVisible}
         onClose={() => setIsChatVisible(false)}
