@@ -148,6 +148,8 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
       {isExpanded && (
         <GiftedChat
           messages={messages}
+          extraScrollHeight={100}
+          keyboardShouldPersistTaps="handled"
           onSend={onSend}
           user={{
             _id: 1,
@@ -159,9 +161,6 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
           isCustomViewBottom={true}
           textInputProps={{
             placeholder: 'Type a message...',
-            style: {
-              maxHeight: 40,
-            },
           }}
           keyboardAvoidingViewProps={{ keyboardVerticalOffset: headerHeight }}
           reply={{
