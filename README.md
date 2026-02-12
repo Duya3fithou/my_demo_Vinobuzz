@@ -1,7 +1,3 @@
-Ok, cắt mỡ, giữ cơ. Dưới đây là bản **README rút gọn đúng kiểu take-home**, đủ kỹ thuật để interviewer gật đầu, không dài đến mức họ cuộn chuột với vẻ oán hận.
-
----
-
 # VinoBuzz – React Native Demo
 
 A small React Native prototype demonstrating **mobile-first patterns**: chat overlay, product detail screen, navigation, and deep linking.
