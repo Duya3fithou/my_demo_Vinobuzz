@@ -8,9 +8,9 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useHeaderHeight } from '@react-navigation/elements'
+import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { mockChatMessages } from '../utils/mockData';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -30,7 +30,6 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-  const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight()
 
   useEffect(() => {
@@ -96,6 +95,29 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
     setIsExpanded(!isExpanded);
   };
 
+  const renderCustomView = useCallback((props: any) => {
+    const currentMessage = props.currentMessage;
+    if (currentMessage.productId) {
+      return (
+        <View style={styles.customViewContainer}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.viewProductButton,
+              pressed && styles.viewProductButtonPressed,
+            ]}
+            onPress={() => {
+              onNavigateToProduct(currentMessage.productId);
+              onClose();
+            }}
+          >
+            <Text style={styles.viewProductButtonText}>View Product</Text>
+          </Pressable>
+        </View>
+      );
+    }
+    return null;
+  }, [onNavigateToProduct, onClose]);
+
   if (!visible) return null;
 
   return (
@@ -133,13 +155,21 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
           }}
           isTyping={isTyping}
           onQuickReply={onQuickReply}
+          renderCustomView={renderCustomView}
+          isCustomViewBottom={true}
           textInputProps={{
-            placeholder: 'Nhập tin nhắn...',
+            placeholder: 'Type a message...',
             style: {
-              height: 40,
+              maxHeight: 40,
             },
           }}
           keyboardAvoidingViewProps={{ keyboardVerticalOffset: headerHeight }}
+          reply={{
+            swipe: {
+              isEnabled: true,
+              direction: 'left',
+            },
+          }}
         />
       )}
 
@@ -165,7 +195,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: SCREEN_HEIGHT ,
+    height: SCREEN_HEIGHT*0.88 ,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -260,5 +290,35 @@ const styles = StyleSheet.create({
   minimizedMessage: {
     fontSize: 14,
     color: '#666',
+  },
+  customViewContainer: {
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  viewProductButton: {
+    backgroundColor: '#8B0000',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  viewProductButtonPressed: {
+    opacity: 0.8,
+  },
+  viewProductButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

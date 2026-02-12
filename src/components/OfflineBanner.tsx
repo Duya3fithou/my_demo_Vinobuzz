@@ -28,7 +28,7 @@ export const OfflineBanner = () => {
         },
       ]}
     >
-      <Text style={styles.text}>Không có kết nối mạng</Text>
+      <Text style={styles.text}>No internet connection</Text>
     </Animated.View>
   );
 };

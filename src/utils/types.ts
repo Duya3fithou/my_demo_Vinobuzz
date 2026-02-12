@@ -10,6 +10,7 @@ export interface Product {
 }
 
 export interface ChatMessage extends IMessage {
+  productId?: string;
   quickReplies?: {
     type: 'radio' | 'checkbox';
     values: Array<{

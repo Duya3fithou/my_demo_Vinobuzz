@@ -34,7 +34,7 @@ export const ProductDetailScreen: React.FC<Props> = ({ route }) => {
   }, []);
 
   const handleAddToCart = () => {
-    Alert.alert('Thành công', 'Sản phẩm đã được thêm vào giỏ hàng!');
+    Alert.alert('Success', 'Product added to cart!');
   };
 
   if (isLoading) {
@@ -44,7 +44,7 @@ export const ProductDetailScreen: React.FC<Props> = ({ route }) => {
   if (!product) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Không tìm thấy sản phẩm</Text>
+        <Text style={styles.errorText}>Product not found</Text>
       </View>
     );
   }
@@ -89,7 +89,7 @@ export const ProductDetailScreen: React.FC<Props> = ({ route }) => {
           ]}
           onPress={handleAddToCart}
         >
-          <Text style={styles.addToCartText}>Thêm vào giỏ hàng</Text>
+          <Text style={styles.addToCartText}>Add to Cart</Text>
         </Pressable>
       </View>
     </View>

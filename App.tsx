@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { OfflineBanner } from './src/components/OfflineBanner';
 
+
 function App() {
   return (
     <GestureHandlerRootView style={styles.container}>

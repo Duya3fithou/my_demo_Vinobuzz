@@ -43,7 +43,7 @@ export const AppNavigator = () => {
           name="ProductDetail"
           component={ProductDetailScreen}
           options={{
-            title: 'Chi tiết sản phẩm',
+            title: 'Product Details',
           }}
         />
       </Stack.Navigator>
