@@ -1,97 +1,197 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# VinoBuzz - React Native Demo
 
-# Getting Started
+Demo ứng dụng React Native với chatbox overlay, product detail screen, navigation và deep linking.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Yêu cầu hệ thống
 
-## Step 1: Start Metro
+- Node.js >= 20
+- React Native 0.83.2
+- iOS: Xcode 14+ và iOS 13.4+
+- Android: Android Studio và API 21+
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Cài đặt
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### 1. Clone và cài đặt dependencies
 
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+```bash
+cd My_demo01
+npm install
 ```
 
-## Step 2: Build and run your app
+### 2. iOS Setup
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+cd ios
+pod install
+cd ..
 ```
 
-### iOS
+### 3. Chạy ứng dụng
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+**iOS:**
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+**Android:**
+```bash
+npm run android
+```
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Tính năng chính
 
-## Step 3: Modify your app
+### Task 1: Chatbox với FAB + Overlay
+- **Floating Action Button (FAB)**: Nút tròn màu đỏ wine ở góc dưới bên phải
+- **Chat Overlay**: 
+  - Minimized state: Bubble nhỏ hiển thị preview tin nhắn cuối
+  - Expanded state: Full screen chat với GiftedChat
+  - Smooth animation transition giữa 2 states
+  - Typing indicator khi bot đang trả lời
+  - Quick reply buttons để navigate đến product detail
 
-Now that you have successfully run the app, let's make changes!
+### Task 2: Product Detail Screen
+- **Gallery**: Swipeable image gallery với FlatList horizontal paging
+- **Product Info**: Tên, giá, mô tả sản phẩm
+- **Expandable Section**: Tasting notes có thể mở/đóng với animation
+- **Sticky CTA**: Nút "Thêm vào giỏ hàng" luôn hiển thị ở bottom
+- **Loading State**: Skeleton loading khi vào trang lần đầu
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### Task 3: Navigation & Connectivity
+- **React Navigation**: Stack navigation giữa Home và ProductDetail
+- **Deep Linking**: Hỗ trợ mở product qua deep link
+- **Offline Detection**: Banner hiển thị khi mất kết nối mạng
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## Test Deep Linking
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### iOS (Simulator)
+```bash
+xcrun simctl openurl booted "vinobuzz://product/1"
+```
 
-## Congratulations! :tada:
+### Android (Device/Emulator)
+```bash
+adb shell am start -W -a android.intent.action.VIEW -d "vinobuzz://product/1"
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+### Test các productId khác
+- `vinobuzz://product/1` - Château Margaux 2015
+- `vinobuzz://product/2` - Sassicaia 2016
+- `vinobuzz://product/3` - Opus One 2018
+- `vinobuzz://product/4` - Penfolds Grange 2017
 
-### Now what?
+## Cấu trúc thư mục
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+```
+src/
+├── components/
+│   ├── ChatFAB.tsx              # Floating Action Button
+│   ├── ChatOverlay.tsx          # Chat overlay với minimize/expand
+│   ├── ProductGallery.tsx       # Swipeable image gallery
+│   ├── ExpandableSection.tsx    # Expandable content section
+│   ├── OfflineBanner.tsx        # Network status banner
+│   └── LoadingSkeleton.tsx      # Product loading skeleton
+├── screens/
+│   ├── HomeScreen.tsx           # Main screen với FAB
+│   └── ProductDetailScreen.tsx  # Product detail với gallery
+├── navigation/
+│   └── AppNavigator.tsx         # React Navigation setup
+├── utils/
+│   ├── mockData.ts              # Mock messages & products
+│   └── types.ts                 # TypeScript interfaces
+└── hooks/
+    └── useNetworkStatus.ts      # Network detection hook
+```
 
-# Troubleshooting
+## Implementation Notes
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+### 1. Animations
+- Sử dụng `Animated` API cho smooth transitions
+- ChatOverlay có slide animation khi mở/đóng
+- ExpandableSection dùng `LayoutAnimation` cho height animation
+- LoadingSkeleton có pulse effect để hiển thị loading state
 
-# Learn More
+### 2. Keyboard Handling
+- GiftedChat tích hợp `KeyboardAvoidingView` với `keyboardVerticalOffset` phù hợp cho iOS/Android
+- Chat overlay tự động adjust khi keyboard hiển thị
 
-To learn more about React Native, take a look at the following resources:
+### 3. Deep Linking Configuration
+- **iOS**: CFBundleURLTypes trong Info.plist với scheme `vinobuzz`
+- **Android**: intent-filter trong AndroidManifest.xml
+- React Navigation linking config map URL patterns đến screens
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+### 4. Offline Detection
+- Sử dụng `@react-native-community/netinfo` để detect network state
+- Custom hook `useNetworkStatus` expose isOffline state
+- OfflineBanner tự động slide in/out khi network thay đổi
+
+### 5. Mobile-Specific Patterns
+- FlatList với `pagingEnabled` cho smooth horizontal scrolling
+- Platform-specific shadows (iOS: shadowColor, Android: elevation)
+- SafeAreaView/useSafeAreaInsets cho notch/dynamic island
+- Sticky footer với position absolute
+
+### 6. State Management
+- Local state với useState cho UI interactions
+- Mock data trong utils/mockData.ts
+- No external state management library (Redux, MobX) - giữ đơn giản
+
+### 7. TypeScript
+- Type-safe navigation với RootStackParamList
+- Interface cho Product, ChatMessage
+- Props typing cho tất cả components
+
+## Dependencies chính
+
+```json
+{
+  "react-native-gifted-chat": "^3.3.2",
+  "@react-navigation/native": "^7.1.28",
+  "@react-navigation/native-stack": "^7.12.0",
+  "@react-native-community/netinfo": "latest",
+  "react-native-gesture-handler": "^2.30.0",
+  "react-native-reanimated": "^4.2.1",
+  "react-native-safe-area-context": "^5.6.2",
+  "react-native-screens": "^4.23.0"
+}
+```
+
+## Troubleshooting
+
+### iOS Pod Install Issues
+Nếu gặp lỗi encoding khi chạy pod install:
+```bash
+export LANG=en_US.UTF-8
+cd ios && pod install
+```
+
+### Metro Bundler Cache
+Nếu gặp lỗi import hoặc build:
+```bash
+npm start -- --reset-cache
+```
+
+### Android Build Issues
+Clean build:
+```bash
+cd android && ./gradlew clean
+cd .. && npm run android
+```
+
+## Giả định & Tradeoffs
+
+1. **Mock Data**: Tất cả data được mock, không có real API calls
+2. **Images**: Sử dụng Unsplash placeholder images
+3. **Icons**: Dùng emoji thay vì icon libraries để giảm dependencies
+4. **Animations**: Chọn Animated API native thay vì thư viện bên ngoài để giảm bundle size
+5. **State**: Local state only, phù hợp cho demo app nhỏ
+6. **Error Handling**: Basic error handling, production cần robust hơn
+7. **Testing**: Chưa có unit/integration tests (ngoài scope của demo)
+
+## Thời gian thực hiện
+
+Ước tính: 4-6 giờ cho full implementation bao gồm:
+- Setup project & dependencies: 30 phút
+- Components implementation: 2-3 giờ
+- Screens & navigation: 1-2 giờ
+- Testing & refinement: 1 giờ
+- Documentation: 30 phút
